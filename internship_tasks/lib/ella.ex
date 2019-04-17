@@ -29,25 +29,29 @@ defmodule Ella do
 
     """
     def say(phrase \\ "") do
-        clean_phrase = String.replace(phrase, ~r/[^\p{L}?]/, "") 
-        # IO.puts(clean_phrase)
-        # Проверяем входное значение и на основе этого возвращаем ответ
-        cond do
-            # Если пустая строка  
-            String.length(String.replace(phrase, ~r/[^\p{L}\p{N}?]/, "")) == 0 -> "Подумаешь!"
+        if is_bitstring(phrase) do
+            clean_phrase = String.replace(phrase, ~r/[^\p{L}?]/, "") 
+            # IO.puts(clean_phrase)
+            # Проверяем входное значение и на основе этого возвращаем ответ
+            cond do
+                # Если пустая строка  
+                String.length(String.replace(phrase, ~r/[^\p{L}\p{N}?]/, "")) == 0 -> "Подумаешь!"
 
-            # Если накричали (капс) с вопросом
-            String.last(phrase) == "?" and String.replace(phrase, ~r/[^\p{L}]/, "") != "" and clean_phrase == String.upcase(clean_phrase)->
-                "Не учите меня жить!"
+                # Если накричали (капс) с вопросом
+                String.last(phrase) == "?" and String.replace(phrase, ~r/[^\p{L}]/, "") != "" and clean_phrase == String.upcase(clean_phrase)->
+                    "Не учите меня жить!"
 
-            # Если задали вопрос
-            String.last(clean_phrase) == "?" -> "Мрак"
+                # Если задали вопрос
+                String.last(clean_phrase) == "?" -> "Мрак"
 
-            # Если накричали (капсом)
-            clean_phrase == String.upcase(clean_phrase) -> "Хамите, парниша!"
-            
-            # Во всех остальных случаях
-            true -> "Хо-хо!"    
+                # Если накричали (капсом)
+                clean_phrase == String.upcase(clean_phrase) -> "Хамите, парниша!"
+                
+                # Во всех остальных случаях
+                true -> "Хо-хо!"    
+            end
+        else 
+            raise ArgumentError, message: "Invalid argument"
         end
     end
 end

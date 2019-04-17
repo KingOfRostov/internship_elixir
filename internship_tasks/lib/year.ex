@@ -25,10 +25,14 @@ defmodule Year do
     def leap?(year) do
         # Если делится на 4 и при этом не делится на 100. 
         # Или если делится на 400, тогда год считается високосным
-        if (rem(year, 4) == 0 and rem(year,100) != 0) or rem(year, 400) == 0 do
-            true
-        else 
-            false
+        if is_integer(year) do 
+            if (rem(year, 4) == 0 and rem(year,100) != 0) or rem(year, 400) == 0 do
+                true
+            else 
+                false
+            end
+        else
+            raise ArgumentError, message: "Invalid argument"
         end
     end
 end

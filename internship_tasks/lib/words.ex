@@ -23,11 +23,15 @@ defmodule Words do
 
     """
     def count(phrase) do
-        # Обрабатываем входной текст, переводим результат в список слов и считаем вхождения
-        phrase
-        |> clear()
-        |> String.split()
-        |> count(%{})
+        if is_bitstring phrase do
+            # Обрабатываем входной текст, переводим результат в список слов и считаем вхождения
+            phrase
+            |> clear()
+            |> String.split()
+            |> count(%{})
+        else 
+            raise ArgumentError, message: "Invalid argument"
+        end
     end
 
     # Если список слов пуст - просто возвращаем результат
