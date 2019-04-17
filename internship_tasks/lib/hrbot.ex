@@ -30,7 +30,7 @@ defmodule HrBot do
                 body = resp.body
                 # <В> </В> В этом тэге заключена форма слова в винительном падеже
                 form_position = 
-                    Regex.run(~r/\<В\>[a-zA-Zа-яА-Я-\/0-9\s]+[ ]*<\/В\>/u, body)
+                    Regex.run(~r/\<В\>[a-zA-Zа-яА-Я-\/0-9\s']+[ ]*<\/В\>/u, body)
                     |> List.to_string() 
                     # Избавляемся от тега <В> </В>
                     |> String.slice(3..-1)
@@ -47,7 +47,28 @@ defmodule HrBot do
                     # Избавляемся от тега <В> </В>
                     |> String.slice(3..-1)
                     |> String.slice(0..-5)
-                "Поприветствуйте #{form_name}, нашего нового #{form_position}!"
+                
+                # Если должность состоит из русских символов только. Так как сайт translate.ru другие не принимает 
+                if position == String.replace(position, ~r/[^а-яА-ЯщцушхъфырэчстьюЩЦУШЧЪФЫРЭЧСТЬЮ]/, "") do
+
+                    # Узнаем род должности (мужской или женский)
+                    url_pos_gender = "https://www.translate.ru/Grammar/ru-en/" <> String.replace(position, " " , "%20")
+                    resp = HTTPoison.get! url_pos_gender
+                    body = resp.body
+                    pos_gender = 
+                        Regex.run(~r/м.р.|ж.р./, body)
+                        |> List.to_string()
+
+                    # Проверяем, если гендер имени и род должности - женские, то заменяем
+                    # слова "нашего нового" на "нашу новую" 
+                    if Petrovich.Detector.detect_gender(name, :firstname) == {:ok, "female"} and pos_gender == "ж.р." do
+                        "Поприветствуйте #{form_name}, нашу новую #{form_position}!"
+                    else 
+                        "Поприветствуйте #{form_name}, нашего нового #{form_position}!"
+                    end
+                else 
+                    "Поприветствуйте #{form_name}, нашего нового #{form_position}!"
+                end
             rescue 
                 # В случае, когда ответ от ws3.morpher.ru будет :nil - List.to_string() дает ошибку 
                 e in FunctionClauseError -> "Поприветствуйте #{name}, нашего нового #{position}!"
