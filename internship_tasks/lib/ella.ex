@@ -29,17 +29,22 @@ defmodule Ella do
 
     """
     def say(phrase \\ "") do
-
+        clean_phrase = String.replace(phrase, ~r/[^\p{L}?]/, "") 
+        # IO.puts(clean_phrase)
         # Проверяем входное значение и на основе этого возвращаем ответ
         cond do
             # Если пустая строка  
-            String.length(phrase) == 0 -> "Подумаешь!"
+            String.length(String.replace(phrase, ~r/[^\p{L}\p{N}?]/, "")) == 0 -> "Подумаешь!"
+
+            # Если накричали (капс) с вопросом
+            String.last(phrase) == "?" and String.replace(phrase, ~r/[^\p{L}]/, "") != "" and clean_phrase == String.upcase(clean_phrase)->
+                "Не учите меня жить!"
+
+            # Если задали вопрос
+            String.last(clean_phrase) == "?" -> "Мрак"
 
             # Если накричали (капсом)
-            phrase == String.upcase(phrase) -> "Хамите, парниша!"
-            
-            # Если задали вопрос
-            String.last(String.trim(phrase)) == "?" -> "Мрак"
+            clean_phrase == String.upcase(clean_phrase) -> "Хамите, парниша!"
             
             # Во всех остальных случаях
             true -> "Хо-хо!"    

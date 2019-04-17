@@ -21,6 +21,11 @@ defmodule InternshipTasksTest do
     assert Ella.say() == "Подумаешь!"
     assert Ella.say("КРИК") == "Хамите, парниша!"
     assert Ella.say("nothing SpeCIal") == "Хо-хо!"
+    assert Ella.say("@&%*^QQWT") == "Хамите, парниша!"
+    assert Ella.say("@&%*^QQWT?") == "Не учите меня жить!"
+    assert Ella.say("  ") == "Подумаешь!"
+    assert Ella.say("@&%*???") == "Мрак"
+    assert Ella.say("@&%*?^QQWT") == "Хамите, парниша!"
   end
 
   test "count words" do
