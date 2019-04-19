@@ -30,22 +30,21 @@ defmodule Ella do
     """
     def say(phrase \\ "") do
         if is_bitstring(phrase) do
-            clean_phrase = String.replace(phrase, ~r/[^\p{L}?]/, "") 
-            # IO.puts(clean_phrase)
+
             # Проверяем входное значение и на основе этого возвращаем ответ
             cond do
                 # Если пустая строка  
-                String.length(String.replace(phrase, ~r/[^\p{L}\p{N}?]/, "")) == 0 -> "Подумаешь!"
+                is_empty?(phrase) -> "Подумаешь!"
 
                 # Если накричали (капс) с вопросом
-                String.last(phrase) == "?" and String.replace(phrase, ~r/[^\p{L}]/, "") != "" and clean_phrase == String.upcase(clean_phrase)->
+                is_question?(phrase) and any_letters?(phrase) and is_shout?(phrase)->
                     "Не учите меня жить!"
 
                 # Если задали вопрос
-                String.last(clean_phrase) == "?" -> "Мрак"
+                is_question?(phrase) -> "Мрак"
 
                 # Если накричали (капсом)
-                clean_phrase == String.upcase(clean_phrase) -> "Хамите, парниша!"
+                is_shout?(phrase) -> "Хамите, парниша!"
                 
                 # Во всех остальных случаях
                 true -> "Хо-хо!"    
@@ -54,4 +53,9 @@ defmodule Ella do
             raise ArgumentError, message: "Invalid argument"
         end
     end
+    
+    defp is_empty?(phrase), do: String.trim(phrase) == ""
+    defp any_letters?(phrase), do: Regex.run(~r/[\p{L}]/u, phrase) != nil
+    defp is_question?(phrase), do: String.last(phrase) == "?"
+    defp is_shout?(phrase), do: phrase == String.upcase(phrase) and any_letters?(phrase)
 end

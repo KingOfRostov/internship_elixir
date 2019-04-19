@@ -8,29 +8,31 @@ defmodule RNATranscription do
 
     ## Параметры
 
-        - dna: Строка, в которой находится цепочка ДНК.
+        - dna: Список символов, в котором находится цепочка ДНК.
 
     ## Примеры
 
-        iex> RNATranscription.to_rna("ACGTGGTCTTAA")
-        "UGCACCAGAAUU"
+        iex> RNATranscription.to_rna('ACGTGGTCTTAA')
+        'UGCACCAGAAUU'
 
-        iex> RNATranscription.to_rna("T")
-        "A"
+        iex> RNATranscription.to_rna('T')
+        'A'
 
     """
-    def to_rna(dna) do
-        if dna == String.replace(dna, ~r/[^ATCGАТС]/, "") do
-            # Заводим Map, в которой ключи - ДНК, значения - соответствующие ключу РНК 
-            rule = %{"G" => "C", "C" => "G", "T" => "A", "A" => "U"}
-            # Переводим входную цепочку в список символов
-            list = String.graphemes(dna)
-            # Для каждого символа применяем подстановку 
-            rna_list = Enum.map(list, fn(i) -> rule[i] end)
-            # Переводим список обратно в строку, что бы вернуть результат строкой
-            List.to_string(rna_list)
-        else 
-            raise ArgumentError, message: "Invalid argument"
+    def to_rna(dna) do        
+        try do
+            Enum.map(dna, & transcribe(&1))
+        rescue
+            e in ArgumentError -> "Invalid argument"
+            e in Protocol.UndefinedError -> "Invalid argument"
+            e in FunctionClauseError -> "Invalid argument"
         end
     end
+
+    # Переводит ДНК в РНК
+    defp transcribe(?G), do: ?C
+    defp transcribe(?C), do: ?G
+    defp transcribe(?T), do: ?A
+    defp transcribe(?A), do: ?U
+
 end

@@ -27,19 +27,10 @@ defmodule Words do
             # Обрабатываем входной текст, переводим результат в список слов и считаем вхождения
             phrase
             |> clear()
-            |> String.split()
-            |> count(%{})
+            |> Enum.reduce(%{}, fn(word, acc) -> Map.update(acc, word, 1, &(&1 + 1)) end)
         else 
             raise ArgumentError, message: "Invalid argument"
         end
-    end
-
-    # Если список слов пуст - просто возвращаем результат
-    defp count([], res), do: res
-
-    # Идем рекурсивно по списку, обновляя результат 
-    defp count([head|tail], res) do
-        count(tail, Map.update(res, head, 1, fn current_value -> current_value + 1 end))
     end
 
     # Переводит символы в нижний регистр и заменяет все, кроме букв и цифр на пробел
@@ -47,5 +38,6 @@ defmodule Words do
         phrase
         |> String.downcase()
         |> String.replace(~r/[^\p{L}\p{N}-]/, " ")
+        |> String.split()
     end
 end

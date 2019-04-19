@@ -26,13 +26,13 @@ defmodule Year do
         # Если делится на 4 и при этом не делится на 100. 
         # Или если делится на 400, тогда год считается високосным
         if is_integer(year) do 
-            if (rem(year, 4) == 0 and rem(year,100) != 0) or rem(year, 400) == 0 do
-                true
-            else 
-                false
-            end
+            (div_by?(year, 4) and not div_by?(year, 100)) or div_by?(year, 400)
         else
             raise ArgumentError, message: "Invalid argument"
         end
+    end
+
+    defp div_by?(year, number) do
+        rem(year, number) == 0
     end
 end
