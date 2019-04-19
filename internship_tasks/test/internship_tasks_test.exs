@@ -48,9 +48,9 @@ defmodule InternshipTasksTest do
   end
 
   test "dna to rna" do
-    assert RNATranscription.to_rna("A") == "U"
-    assert RNATranscription.to_rna("ACGTGGTCTTAA") == "UGCACCAGAAUU"
-    assert RNATranscription.to_rna("") == ""
-    assert RNATranscription.to_rna("TTTAAA") == "AAAUUU"
+    assert RNATranscription.to_rna('A') == 'U'
+    assert RNATranscription.to_rna('ACGTGGTCTTAA') == 'UGCACCAGAAUU'
+    assert RNATranscription.to_rna('') == ''
+    assert RNATranscription.to_rna('TTTAAA') == 'AAAUUU'
   end
 end
